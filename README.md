@@ -5,3 +5,5 @@ Right now it can only identify the following colors-
 * Red
 * Blue
 * Yellow
+* White
+* Black
