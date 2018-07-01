@@ -22,16 +22,28 @@ while(1):
     blue_lower = np.array([99,115,150],np.uint8)
     blue_upper = np.array([110,255,255],np.uint8)
 
-    # red color
+    # yellow color
 
     yellow_lower = np.array([22,60,200],np.uint8)
     yellow_upper = np.array([60,255,255],np.uint8)
+
+    # white color
+
+    white_lower = np.array([0,0,200],np.uint8)
+    white_upper = np.array([180,20,255],np.uint8)
+
+    # black color
+
+    black_lower = np.array([0,0,0],np.uint8)
+    black_upper = np.array([180,255,30],np.uint8)
 
     # all color together
 
     red = cv2.inRange(hsv, red_lower, red_upper)
     blue = cv2.inRange(hsv, blue_lower, blue_upper)
     yellow = cv2.inRange(hsv, yellow_lower, yellow_upper)
+    white = cv2.inRange(hsv, white_lower, white_upper)
+    black = cv2.inRange(hsv, black_lower, black_upper)
 
     # Morphological Transform, Dilation
 
@@ -45,6 +57,12 @@ while(1):
 
     yellow = cv2.dilate(yellow, kernal)
     res_yellow = cv2.bitwise_and(img, img, mask = yellow)
+
+    white = cv2.dilate(white, kernal)
+    res_white = cv2.bitwise_and(img, img, mask = white)
+
+    black = cv2.dilate(black, kernal)
+    res_black = cv2.bitwise_and(img, img, mask = black)
 
     # Tracking red
     (_, contours, hierarchy)=cv2.findContours(red, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -73,6 +91,24 @@ while(1):
             x, y, w, h = cv2.boundingRect(contour)
             img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.putText(img, "Yellow Colour", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0))
+
+    # Tracking white
+    (_, contours, hierarchy)=cv2.findContours(white, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    for pic, contour in enumerate(contours):
+        area = cv2.contourArea(contour)
+        if(area > 300):
+            x, y, w, h = cv2.boundingRect(contour)
+            img = cv2.rectangle(img, (x, y), (x + w, y + h), (255, 255, 255), 2)
+            cv2.putText(img, "White Colour", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255))
+
+    # Tracking black
+    (_, contours, hierarchy)=cv2.findContours(black, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    for pic, contour in enumerate(contours):
+        area = cv2.contourArea(contour)
+        if(area > 300):
+            x, y, w, h = cv2.boundingRect(contour)
+            img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 0), 2)
+            cv2.putText(img, "Black Colour", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0))
     
     cv2.imshow("Color Tracking", img)
     if cv2.waitKey(10) & 0xFF == ord('q'):
